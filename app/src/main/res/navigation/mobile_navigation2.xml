@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation2"
+    app:startDestination="@+id/nav_conexion_negocio">
+
+        <fragment
+            android:id="@+id/nav_conexion_negocio"
+            android:name="com.example.quickfleet.ui.negocioconexion.ConexionLicenciaFragment"
+            android:label="@string/title_conexion_negocio"
+            tools:layout="@layout/fragment_conexion_licencia">
+
+            <action
+                android:id="@+id/action_licencia_to_datos"
+                app:destination="@id/nav_conexion_datos" />
+
+            <action
+                android:id="@+id/action_licencia_to_clave"
+                app:destination="@id/nav_conexion_clave" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/nav_conexion_datos"
+            android:name="com.example.quickfleet.ui.negocioconexion.ConexionNegocioFragment"
+            android:label="@string/title_conexion_negocio"
+            tools:layout="@layout/fragment_conexion_negocio">
+            <action
+                android:id="@+id/action_datos_to_clave"
+                app:destination="@id/nav_conexion_clave" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/nav_conexion_clave"
+            android:name="com.example.quickfleet.ui.negocioconexion.ConexionClaveFragment"
+            android:label="@string/title_conexion_negocio"
+            tools:layout="@layout/fragment_conexion_clave" />
+
+
+
+    <fragment
+        android:id="@+id/nav_ubicacion"
+        android:name="com.example.quickfleet.ui.ubicacion.UbicacionFragment"
+        android:label="@string/title_ubicacion"
+        tools:layout="@layout/fragment_ubicacion" />
+
+    <fragment
+        android:id="@+id/nav_rutas"
+        android:name="com.example.quickfleet.ui.rutas.RutasFragment"
+        android:label="@string/title_rutas"
+        tools:layout="@layout/fragment_rutas" />
+
+    <fragment
+        android:id="@+id/nav_asignacion"
+        android:name="com.example.quickfleet.ui.asignacion.AsignacionFragment"
+        android:label="@string/title_asignacion"
+        tools:layout="@layout/fragment_asignacion" />
+    <fragment
+        android:id="@+id/nav_crear_pedido"
+        android:name="com.example.quickfleet.ui.crear_pedido.CrearPedidoFragment"
+        android:label="Creación de pedidos"
+        tools:layout="@layout/fragment_crear_pedido"/>
+
+</navigation>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/inicio_app"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/look_and_fell"
+    android:orientation="vertical"
+    tools:context=".Inicio_Aplicacion"
+    android:focusable="true"
+    android:gravity="center"
+    android:clickable="true">
+
+    <ImageView
+        android:id="@+id/imagen"
+        android:layout_width="380dp"
+        android:layout_height="80dp"
+        android:src="@drawable/delivery_in_transit"
+        tools:ignore=",MissingConstraints"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Eficiencia en entregas"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginBottom="60dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Toca la pantalla para inciar"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="20sp"/>
+
+</LinearLayout>

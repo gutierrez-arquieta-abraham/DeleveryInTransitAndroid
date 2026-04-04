@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="32dp"
+    android:background="@drawable/gradient_background_teal"
+    tools:context=".ui.conexion.ConexionFragment">
+
+    <TextView
+        android:id="@+id/textViewConexionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Conecta a negocio"
+        android:textColor="@android:color/white"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"/>
+
+    <TextView
+        android:id="@+id/textViewConexionDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Necesitamos que a continuación ingreses el código del negocio al que estas ofreciendo tus servicios la cual inicia con “DIT”"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_marginBottom="48dp"/>
+
+    <EditText
+        android:id="@+id/editTextBusinessCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Inserta código del negocio:"
+        android:background="@drawable/edit_text_rounded_white"
+        android:padding="16dp"
+        android:textColor="@android:color/black"
+        android:textColorHint="#888888"
+        android:inputType="textCapCharacters"
+        android:layout_marginBottom="32dp"/>
+
+    <Button
+        android:id="@+id/buttonRegisterBusiness"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Regístrate"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:backgroundTint="#99ffcc"  />
+
+</LinearLayout>

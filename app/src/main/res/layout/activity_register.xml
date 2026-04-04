@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:fillViewport="true"
+    android:background="@drawable/look_and_fell"
+    android:padding="20dp">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:gravity="center_horizontal">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="90dp"
+        android:background="@drawable/delivery_in_transit"
+        android:layout_marginTop="20dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Eficiencia en entrega"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Registro"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:layout_marginBottom="32dp"/>
+
+    <EditText
+        android:id="@+id/editTextFirstName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre(s):"
+        android:textColor="@color/black"
+        android:background="@drawable/edit_text_rounded_white"
+        android:layout_marginBottom="8dp"
+        android:imeOptions="actionNext"
+        android:inputType="textPersonName"/>
+
+    <EditText
+        android:id="@+id/editTextRFC"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="RFC:"
+        android:textColor="@color/black"
+        android:background="@drawable/edit_text_rounded_white"
+        android:layout_marginBottom="8dp"
+        android:imeOptions="actionNext"
+        android:inputType="text"/>
+
+    <EditText
+        android:id="@+id/editTextEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:hint="Email:"
+        android:background="@drawable/edit_text_rounded_white"
+        android:layout_marginBottom="8dp"
+        android:imeOptions="actionNext"
+        android:inputType="textEmailAddress"/>
+
+    <EditText
+        android:id="@+id/editTextPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña:"
+        android:textColor="@color/black"
+        android:background="@drawable/edit_text_rounded_white"
+        android:layout_marginBottom="8dp"
+        android:password="true"
+        android:imeOptions="actionNext"
+        android:inputType="textPassword"/>
+
+    <EditText
+        android:id="@+id/editTextConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Confirmar contraseña:"
+        android:background="@drawable/edit_text_rounded_white"
+        android:layout_marginBottom="8dp"
+        android:password="true"
+        android:textColor="@color/black"
+        android:imeOptions="actionDone"
+        android:inputType="textPassword"/>
+
+    <Button
+        android:id="@+id/buttonRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Regístrate"
+        android:backgroundTint="#99FFCC"
+        android:layout_marginBottom="32dp"
+        android:paddingLeft="32dp"
+        android:paddingRight="32dp"
+        />
+  </LinearLayout>
+</ScrollView>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_conexion_negocio"
+            android:icon="@drawable/conexion"
+            android:title="Creacion de conexion a negocio" />
+        <item
+            android:id="@+id/nav_crear_pedido"
+            android:icon="@drawable/_creacion_pedidos"
+            android:title="Creación de pedidos" />
+        <item
+            android:id="@+id/nav_asignacion"
+            android:icon="@drawable/baseline_assignment_ind_24"
+            android:title="Asignacion de pedidos" />
+        <item
+            android:id="@+id/nav_ubicacion"
+            android:icon="@drawable/baseline_add_location_24"
+            android:title="_Ubicacion de Repartidores" />
+        <item
+            android:id="@+id/nav_rutas"
+            android:icon="@drawable/estadoservicio"
+            android:title="Pedidos completados" />
+        <item
+            android:id="@+id/nav_Salir"
+            android:icon="@drawable/cerrarsecion"
+            android:title="Salir" />
+    </group>
+</menu>

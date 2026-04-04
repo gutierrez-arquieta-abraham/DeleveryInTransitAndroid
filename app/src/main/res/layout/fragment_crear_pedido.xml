@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/gradient_background_teal"> <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Nuevo Pedido"
+    android:textColor="@android:color/white"
+    android:textSize="28sp"
+    android:textStyle="bold"
+    android:gravity="center"
+    android:layout_marginBottom="32dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ubicación de entrega"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/etDireccion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_rounded_white"
+        android:padding="12dp"
+        android:textColor="@color/black"
+        android:hint="Ej: Av. Reforma 123, Centro"
+        android:inputType="textPostalAddress"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Descripción del paquete"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/etDescripcion"
+        android:textColor="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@drawable/edit_text_rounded_white"
+        android:padding="12dp"
+        android:gravity="top"
+        android:hint="Ej: Paquete mediano, frágil..."
+        android:inputType="textMultiLine"
+        android:layout_marginBottom="32dp"/>
+
+    <Button
+        android:id="@+id/btnCrearPedido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Subir Pedido"
+        android:textStyle="bold"
+        android:backgroundTint="#99ffcc"
+        android:textColor="#004d40"
+        android:padding="14dp"/>
+
+</LinearLayout>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@drawable/gradient_background_teal"
+    tools:context=".ui.negocioconexion.ConexionNegocioFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="32dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Crea conexión a negocio"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Necesitamos que a continuación ingreses todos los datos de tu negocio para agilizar tus procesos"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:layout_marginBottom="24dp" />
+
+        <EditText
+            android:id="@+id/etNombreNegocio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre de negocio"
+            android:background="@drawable/edit_text_rounded_white"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="#888888"
+            android:inputType="textPersonName"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etDireccionNegocio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Dirección de negocio (Preferentemente de Google Maps)"
+            android:background="@drawable/edit_text_rounded_white"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="#888888"
+            android:inputType="textPostalAddress"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etZonaCobertura"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Zona de cobertura (a la redonda en Km)"
+            android:background="@drawable/edit_text_rounded_white"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="#888888"
+            android:inputType="numberDecimal"
+            android:layout_marginBottom="24dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Necesitamos que a continuación ingreses tus datos personales para verificación"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etRFC"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="RFC"
+            android:background="@drawable/edit_text_rounded_white"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="#888888"
+            android:inputType="textCapCharacters"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Contraseña"
+            android:background="@drawable/edit_text_rounded_white"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="#888888"
+            android:inputType="textPassword"
+            android:layout_marginBottom="32dp" />
+
+        <Button
+            android:id="@+id/btnGuardarCambios"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Guardar cambios"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:backgroundTint="#99FFCC" />
+
+    </LinearLayout>
+</ScrollView>

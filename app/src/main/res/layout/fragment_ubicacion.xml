@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ubicacion.UbicacionFragment">
+
+    <FrameLayout
+        android:id="@+id/map_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#D0D0D0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/mapaOSM"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/stats_panel"
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:cardCornerRadius="20dp"
+            app:cardBackgroundColor="@android:color/white"
+            android:layout_marginBottom="-10dp">
+            <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:orientation="vertical"
+            android:paddingTop="24dp"
+            android:paddingBottom="34dp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ubicación de repartidores"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Te mostramos donde están tus repartidores y en que estado de servicio están"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp"
+                android:layout_marginBottom="16dp"/>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:rowCount="3">
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="start"
+                    android:text="Repartidores en servicio:"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/tv_servicio_count"
+                    android:layout_gravity="end"
+                    android:text="##"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="8dp"
+                    android:text="Repartidores en descanso:"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/tv_descanso_count"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="8dp"
+                    android:text="##"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="8dp"
+                    android:text="Repartidores fuera de servicio:"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/tv_fuera_servicio_count"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="8dp"
+                    android:text="##"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="8dp"
+                    android:text="Repartidores realizando entregas:"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/tv_en_entrega_count"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="8dp"
+                    android:text="##"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_columnWeight="1"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="8dp"
+                    android:text="Repartidores disponibles:"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"/>
+                <TextView
+                    android:id="@+id/tv_disponibles_count"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="8dp"
+                    android:text="##"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"/>
+
+            </GridLayout>
+
+        </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

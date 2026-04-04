@@ -7,7 +7,7 @@
 
         <fragment
             android:id="@+id/nav_conexion_negocio"
-            android:name="com.example.quickfleet.ui.negocioconexion.ConexionLicenciaFragment"
+            android:name="com.PolicodeLabs.Delevery_In_Transit.ui.negocioconexion.ConexionLicenciaFragment"
             android:label="@string/title_conexion_negocio"
             tools:layout="@layout/fragment_conexion_licencia">
 
@@ -22,7 +22,7 @@
 
         <fragment
             android:id="@+id/nav_conexion_datos"
-            android:name="com.example.quickfleet.ui.negocioconexion.ConexionNegocioFragment"
+            android:name="com.PolicodeLabs.Delevery_In_Transit.ui.negocioconexion.ConexionNegocioFragment"
             android:label="@string/title_conexion_negocio"
             tools:layout="@layout/fragment_conexion_negocio">
             <action
@@ -32,7 +32,7 @@
 
         <fragment
             android:id="@+id/nav_conexion_clave"
-            android:name="com.example.quickfleet.ui.negocioconexion.ConexionClaveFragment"
+            android:name="com.PolicodeLabs.Delevery_In_Transit.ui.negocioconexion.ConexionClaveFragment"
             android:label="@string/title_conexion_negocio"
             tools:layout="@layout/fragment_conexion_clave" />
 
@@ -40,24 +40,24 @@
 
     <fragment
         android:id="@+id/nav_ubicacion"
-        android:name="com.example.quickfleet.ui.ubicacion.UbicacionFragment"
+        android:name="com.PolicodeLabs.Delevery_In_Transit.ui.ubicacion.UbicacionFragment"
         android:label="@string/title_ubicacion"
         tools:layout="@layout/fragment_ubicacion" />
 
     <fragment
         android:id="@+id/nav_rutas"
-        android:name="com.example.quickfleet.ui.rutas.RutasFragment"
+        android:name="com.PolicodeLabs.Delevery_In_Transit.ui.rutas.RutasFragment"
         android:label="@string/title_rutas"
         tools:layout="@layout/fragment_rutas" />
 
     <fragment
         android:id="@+id/nav_asignacion"
-        android:name="com.example.quickfleet.ui.asignacion.AsignacionFragment"
+        android:name="com.PolicodeLabs.Delevery_In_Transit.ui.asignacion.AsignacionFragment"
         android:label="@string/title_asignacion"
         tools:layout="@layout/fragment_asignacion" />
     <fragment
         android:id="@+id/nav_crear_pedido"
-        android:name="com.example.quickfleet.ui.crear_pedido.CrearPedidoFragment"
+        android:name="com.PolicodeLabs.Delevery_In_Transit.ui.crear_pedido.CrearPedidoFragment"
         android:label="Creación de pedidos"
         tools:layout="@layout/fragment_crear_pedido"/>
 

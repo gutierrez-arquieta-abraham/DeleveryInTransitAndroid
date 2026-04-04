@@ -37,7 +37,7 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
 
     private FragmentPedidosBinding binding;
     private PedidoRealizadoAdapter completedAdapter;
-    private ArrayList<Pedido> listaPedidosRealizados = new ArrayList<>();
+    private List<PedidoDto> listaPedidosRealizados = new ArrayList<>();
     private PedidoDto pedidoActualEnCurso = null;
     private Integer idRepartidor;
 
@@ -81,7 +81,9 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
 
         // Configuración Recycler
         binding.recyclerViewCompletedOrders.setLayoutManager(new LinearLayoutManager(getContext()));
-        completedAdapter = new PedidoRealizadoAdapter(listaPedidosRealizados);
+        completedAdapter = new PedidoRealizadoAdapter(listaPedidosRealizados, numOrd -> {
+            Toast.makeText(getContext(), "Pronto: Estadísticas de #" + numOrd, Toast.LENGTH_SHORT).show();
+        });
         binding.recyclerViewCompletedOrders.setAdapter(completedAdapter);
 
         // Cargar Datos
@@ -144,41 +146,17 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onResponse(Call<List<PedidoDto>> call, Response<List<PedidoDto>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<PedidoDto> listaDtos = response.body();
                     listaPedidosRealizados.clear();
-
-                    for (PedidoDto dto : listaDtos) {
-                        Pedido p = new Pedido();
-                        p.setId(dto.getNumOrd());
-                        p.setDescripcion(dto.getDescripcion());
-
-                        // ✅ CAMBIO AQUÍ: Usamos la dirección real en lugar de coordenadas
-                        p.setDireccionEntrega(dto.getDestino());
-
-                        p.setEstatus(dto.getEstadoReal());
-                        p.setNombreNegocio(dto.getNombreNegocio());
-                        p.setFechaEntrega(dto.getFechaHoraEntrega());
-                        p.setHoraEntrega(dto.getFechaHoraEntrega());
-                        p.setNombreCliente(dto.getNombreNegocio());
-
-                        listaPedidosRealizados.add(p);
-                    }
-
+                    listaPedidosRealizados.addAll(response.body()); // ¡Copia todos de golpe!
                     completedAdapter.notifyDataSetChanged();
 
-                    // Mostrar lista automáticamente si hay datos
-                    if (!listaPedidosRealizados.isEmpty()) {
-                        binding.recyclerViewCompletedOrders.setVisibility(View.VISIBLE);
-                    } else {
-                        binding.recyclerViewCompletedOrders.setVisibility(View.GONE);
-                    }
+                    binding.recyclerViewCompletedOrders.setVisibility(
+                            listaPedidosRealizados.isEmpty() ? View.GONE : View.VISIBLE
+                    );
                 }
             }
-
             @Override
-            public void onFailure(Call<List<PedidoDto>> call, Throwable t) {
-                // Log.e("HISTORIAL", "Error: " + t.getMessage());
-            }
+            public void onFailure(Call<List<PedidoDto>> call, Throwable t) {}
         });
     }
 
@@ -194,14 +172,37 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
     // CORRECCIÓN: El parámetro ahora es PedidoDto
     private void llenarPedidoActual(PedidoDto p) {
         this.pedidoActualEnCurso = p;
-        // CORRECCIÓN: Usar getDestino()
-        binding.tvCurrentOrderAddress.setText(p.getDestino());
-        String desc = p.getDescripcion() != null ? p.getDescripcion() : "Sin descripción";
-        binding.tvCurrentOrderDescription.setText(desc);
-        binding.tvCurrentOrderStatus.setText("En Camino");
 
+        // 1. Número y Estado
+        binding.tvCurrentOrderId.setText("Pedido #" + p.getNumOrd());
+        binding.tvCurrentOrderStatus.setText(p.getEstadoReal());
+
+        // 2. Cliente
+        String nombreCliente = p.getNombreCliente() != null ? p.getNombreCliente() : "Cliente Desconocido";
+        binding.tvCurrentOrderCliente.setText("Cliente: " + nombreCliente);
+
+        // 3. Dirección
+        binding.tvCurrentOrderAddress.setText(p.getDestino());
+
+        // 4. Descripción
+        String desc = p.getDescripcion() != null ? p.getDescripcion() : "Sin descripción";
+        binding.tvCurrentOrderDescription.setText("Detalle: " + desc);
+
+        // 5. Estado del botón
         binding.btnMarcarEntregado.setEnabled(true);
         binding.btnMarcarEntregado.setText("Marcar como Entregado");
+
+        // --- NUEVA LÓGICA: Llamar al cliente del pedido en curso ---
+        binding.btnLlamarClienteActual.setOnClickListener(v -> {
+            String telefono = p.getTelefonoCliente();
+            if (telefono != null && !telefono.trim().isEmpty()) {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + telefono));
+                startActivity(intent);
+            } else {
+                Toast.makeText(getContext(), "El cliente no proporcionó un número", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void marcarComoEntregado(Integer idPedido) {

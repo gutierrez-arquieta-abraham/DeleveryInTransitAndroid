@@ -29,6 +29,12 @@ public class NegocioDto implements Serializable {
     @SerializedName("codigoConexion")
     private String codigoConexion;
 
+    @SerializedName("latitud")
+    private Double latitud;
+
+    @SerializedName("longitud")
+    private Double longitud;
+
     // --- CONSTRUCTORES ---
     public NegocioDto() {
     }
@@ -89,4 +95,8 @@ public class NegocioDto implements Serializable {
     public void setCodigoConexion(String codigoConexion) {
         this.codigoConexion = codigoConexion;
     }
+    public Double getLatitud() { return latitud; }
+    public void setLatitud(Double latitud) { this.latitud = latitud; }
+    public Double getLongitud() { return longitud; }
+    public void setLongitud(Double longitud) { this.longitud = longitud; }
 }

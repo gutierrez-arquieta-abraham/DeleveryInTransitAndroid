@@ -18,23 +18,23 @@
             android:id="@+id/textViewServiceTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Disponibilidad de tu estado de servicio"
+            android:text="Disponibilidad de servicio"
             android:textColor="@android:color/white"
             android:textSize="26sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"/>
 
         <TextView
             android:id="@+id/textViewServiceSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="En este apartado seleccionas tus horarios de servicio"
-            android:textColor="@android:color/black"
+            android:text="Selecciona tus horarios de trabajo"
+            android:textColor="@android:color/white"
             android:textSize="16sp"
             android:gravity="center"
-            android:layout_marginBottom="32dp"/>
+            android:layout_marginBottom="24dp"/>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -47,64 +47,77 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="@color/white"
-                android:padding="16dp">
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Disponibilidad de horarios"
+                    android:text="Horarios de la semana"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
                     android:gravity="center"
                     android:layout_marginBottom="16dp"/>
 
-                <TableLayout
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:stretchColumns="*" android:shrinkColumns="*">
+                    android:scrollbars="horizontal"
+                    android:fadeScrollbars="false"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp">
 
-                    <TableRow android:background="@drawable/side_nav_bar" android:paddingTop="8dp" android:paddingBottom="8dp">
-                        <TextView android:text="Día" android:gravity="center" android:textStyle="bold" android:padding="4dp" android:textColor="@color/white"/>
-                        <TextView android:text="Lunes" android:gravity="center" android:textStyle="bold" android:padding="4dp" android:textColor="@color/white"/>
-                        <TextView android:text="Martes" android:gravity="center" android:textStyle="bold" android:padding="4dp" android:textColor="@color/white"/>
-                        <TextView android:text="Miércoles" android:gravity="center" android:textStyle="bold" android:padding="4dp" android:textColor="@color/white"/>
-                        <TextView android:text="Jueves" android:gravity="center" android:textStyle="bold" android:padding="4dp" android:textColor="@color/white"/>
-                        <TextView android:text="Sábado" android:gravity="center" android:textStyle="bold" android:padding="4dp" android:textColor="@color/white"/>
-                        <TextView android:text="Domingo" android:gravity="center" android:textStyle="bold" android:padding="4dp" android:textColor="@color/white"/>
-                    </TableRow>
+                    <TableLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                    <TableRow android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
-                        <TextView android:text="Hora de inicio de servicio" android:textColor="@color/black" android:gravity="center" android:padding="4dp" android:textSize="12sp"/>
-                        <Spinner android:id="@+id/spinnerLunesInicio" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerMartesInicio" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerMiercolesInicio" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerJuevesInicio" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerSabadoInicio" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerDomingoInicio" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                    </TableRow>
+                        <TableRow android:background="@drawable/side_nav_bar">
+                            <TextView android:text="Turno" android:gravity="center" android:textStyle="bold" android:padding="12dp" android:textColor="@color/white"/>
+                            <TextView android:text="Lunes" android:gravity="center" android:textStyle="bold" android:padding="12dp" android:textColor="@color/white"/>
+                            <TextView android:text="Martes" android:gravity="center" android:textStyle="bold" android:padding="12dp" android:textColor="@color/white"/>
+                            <TextView android:text="Miércoles" android:gravity="center" android:textStyle="bold" android:padding="12dp" android:textColor="@color/white"/>
+                            <TextView android:text="Jueves" android:gravity="center" android:textStyle="bold" android:padding="12dp" android:textColor="@color/white"/>
+                            <TextView android:text="Viernes" android:gravity="center" android:textStyle="bold" android:padding="12dp" android:textColor="@color/white"/>
+                            <TextView android:text="Sábado" android:gravity="center" android:textStyle="bold" android:padding="12dp" android:textColor="@color/white"/>
+                            <TextView android:text="Domingo" android:gravity="center" android:textStyle="bold" android:padding="12dp" android:textColor="@color/white"/>
+                        </TableRow>
 
-                    <TableRow android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
-                        <TextView android:text="Hora de descanso obligatorio" android:textColor="@color/black" android:gravity="center" android:padding="4dp" android:textSize="12sp"/>
-                        <Spinner android:id="@+id/spinnerLunesDescanso" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerMartesDescanso" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerMiercolesDescanso" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerJuevesDescanso" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerSabadoDescanso" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerDomingoDescanso" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                    </TableRow>
+                        <TableRow android:gravity="center_vertical">
+                            <TextView android:text="Inicio" android:textColor="@color/black" android:textStyle="bold" android:gravity="center" android:padding="12dp"/>
+                            <Spinner android:id="@+id/spinnerLunesInicio" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerMartesInicio" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerMiercolesInicio" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerJuevesInicio" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerViernesInicio" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerSabadoInicio" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerDomingoInicio" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                        </TableRow>
 
-                    <TableRow android:gravity="center_vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
-                        <TextView android:text="Hora de finalización de servicio" android:textColor="@color/black" android:gravity="center" android:padding="4dp" android:textSize="12sp"/>
-                        <Spinner android:id="@+id/spinnerLunesFin" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerMartesFin" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerMiercolesFin" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerJuevesFin" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerSabadoFin" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                        <Spinner android:id="@+id/spinnerDomingoFin" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.AppCompat.Spinner.Underlined"/>
-                    </TableRow>
+                        <TableRow android:gravity="center_vertical">
+                            <TextView android:text="Descanso" android:textColor="@color/black" android:textStyle="bold" android:gravity="center" android:padding="12dp"/>
+                            <Spinner android:id="@+id/spinnerLunesDescanso" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerMartesDescanso" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerMiercolesDescanso" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerJuevesDescanso" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerViernesDescanso" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerSabadoDescanso" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerDomingoDescanso" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                        </TableRow>
 
-                </TableLayout>
+                        <TableRow android:gravity="center_vertical">
+                            <TextView android:text="Fin" android:textColor="@color/black" android:textStyle="bold" android:gravity="center" android:padding="12dp"/>
+                            <Spinner android:id="@+id/spinnerLunesFin" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerMartesFin" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerMiercolesFin" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerJuevesFin" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerViernesFin" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerSabadoFin" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                            <Spinner android:id="@+id/spinnerDomingoFin" android:layout_width="100dp" android:layout_height="wrap_content" android:theme="@style/Theme.AppCompat.Light" style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                        </TableRow>
+
+                    </TableLayout>
+                </HorizontalScrollView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -112,51 +125,48 @@
             android:id="@+id/textViewCurrentStatusTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Estado actual de tu servicio"
+            android:text="Cambiar Estado en Tiempo Real"
             android:textColor="@android:color/white"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:gravity="center"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="16dp"/>
 
         <Button
             android:id="@+id/buttonAvailable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Disponible"
-            android:layout_gravity="center"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginBottom="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            app:cornerRadius="25dp" android:backgroundTint="@color/white" />
+            android:textColor="#388E3C"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"
+            android:padding="14dp"
+            app:cornerRadius="12dp"
+            android:backgroundTint="@color/white" />
 
         <Button
             android:id="@+id/buttonOnBreak"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="En descanso"
-            android:layout_gravity="center"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginBottom="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            app:cornerRadius="25dp" android:backgroundTint="@color/white" />
+            android:textColor="#F57C00"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"
+            android:padding="14dp"
+            app:cornerRadius="12dp"
+            android:backgroundTint="@color/white" />
 
         <Button
             android:id="@+id/buttonOutOfService"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sin servicio"
-            android:layout_gravity="center"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginBottom="16dp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp"
-            app:cornerRadius="25dp" android:backgroundTint="@color/white" />
+            android:text="Sin servicio / Terminar turno"
+            android:textColor="#D32F2F"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"
+            android:padding="14dp"
+            app:cornerRadius="12dp"
+            android:backgroundTint="@color/white" />
 
     </LinearLayout>
 </ScrollView>

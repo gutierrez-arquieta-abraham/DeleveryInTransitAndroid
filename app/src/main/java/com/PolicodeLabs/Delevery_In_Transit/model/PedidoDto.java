@@ -20,6 +20,11 @@ public class PedidoDto {
     private Integer idRepartidor;
     private String nombreRepartidor;
 
+    private String nombreCliente;
+    private String telefonoCliente;
+    private Double latitudDestino;
+    private Double longitudDestino;
+
     public Integer getNumOrd() {
         return numOrd;
     }
@@ -123,4 +128,13 @@ public class PedidoDto {
     public void setNombreRepartidor(String nombreRepartidor) {
         this.nombreRepartidor = nombreRepartidor;
     }
+
+    public String getNombreCliente() { return nombreCliente; }
+    public void setNombreCliente(String nombreCliente) { this.nombreCliente = nombreCliente; }
+    public String getTelefonoCliente() { return telefonoCliente; }
+    public void setTelefonoCliente(String telefonoCliente) { this.telefonoCliente = telefonoCliente; }
+    public Double getLatitudDestino() { return latitudDestino; }
+    public void setLatitudDestino(Double latitudDestino) { this.latitudDestino = latitudDestino; }
+    public Double getLongitudDestino() { return longitudDestino; }
+    public void setLongitudDestino(Double longitudDestino) { this.longitudDestino = longitudDestino; }
 }

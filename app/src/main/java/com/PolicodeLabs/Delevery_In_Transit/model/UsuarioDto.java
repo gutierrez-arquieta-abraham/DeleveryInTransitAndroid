@@ -17,6 +17,8 @@ public class UsuarioDto implements Serializable {
     // ID del negocio al que pertenece
     private Integer idLicencia;
 
+    private String telefono;
+
     public UsuarioDto() {}
 
     // --- GETTERS Y SETTERS ---
@@ -48,4 +50,7 @@ public class UsuarioDto implements Serializable {
 
     public Integer getIdLicencia() { return idLicencia; }
     public void setIdLicencia(Integer idLicencia) { this.idLicencia = idLicencia; }
+
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 }

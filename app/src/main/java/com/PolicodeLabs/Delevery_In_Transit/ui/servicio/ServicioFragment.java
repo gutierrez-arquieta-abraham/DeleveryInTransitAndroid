@@ -32,6 +32,7 @@ public class ServicioFragment extends Fragment implements View.OnClickListener {
 
     private FragmentServicioBinding binding;
     private Integer idUsuario;
+    private ArrayAdapter<CharSequence> adapter; // Adaptador global
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,48 +44,94 @@ public class ServicioFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Recuperar ID
+        // 1. Recuperar ID del Repartidor
         SharedPreferences prefs = requireActivity().getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
         idUsuario = prefs.getInt("ID_USUARIO", -1);
 
-        // 2. Configurar Spinners (Solo pongo Lunes como ejemplo, repite para los demás)
-        configurarSpinner(binding.spinnerLunesInicio, "Lunes_Inicio");
-        configurarSpinner(binding.spinnerLunesDescanso, "Lunes_Descanso");
-        configurarSpinner(binding.spinnerLunesFin, "Lunes_Fin");
-        // ... Repite para Martes, Miércoles, etc.
+        // 2. Inicializar los 18 Spinners de golpe
+        inicializarTodosLosSpinners();
 
-        // 3. Listeners de Botones Manuales
+        // 3. Cargar los horarios guardados para todos los días
+        cargarHorariosGuardados();
+
+        // 4. Listeners de Botones Manuales
         binding.buttonAvailable.setOnClickListener(this);
         binding.buttonOnBreak.setOnClickListener(this);
         binding.buttonOutOfService.setOnClickListener(this);
 
-        // 4. INICIAR EL ROBOT AUTOMÁTICO (Solo una vez)
+        // 5. INICIAR EL ROBOT AUTOMÁTICO (Solo una vez)
         iniciarWorker();
     }
 
-    private void configurarSpinner(Spinner spinner, String clavePref) {
-        // CAMBIO: Usamos createFromResource para leer el XML
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                getContext(),
-                R.array.lista_horarios, // <--- Aquí llamamos a la lista nueva
-                android.R.layout.simple_spinner_item
-        );
-
+    private void inicializarTodosLosSpinners() {
+        // Creamos el adaptador UNA sola vez con el diseño negro
+        adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.lista_horarios,
+                R.layout.spinner_item_black);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
 
-        // Recuperar valor guardado
-        SharedPreferences horariosPrefs = requireActivity().getSharedPreferences("HorariosPrefs", Context.MODE_PRIVATE);
-        String valorGuardado = horariosPrefs.getString(clavePref, "Seleccionar");
+        // Arreglo con los 18 Spinners (Lunes a Domingo, omitiendo el Viernes que no está en tu XML)
+        Spinner[] todosLosSpinners = {
+                binding.spinnerLunesInicio, binding.spinnerMartesInicio, binding.spinnerMiercolesInicio,
+                binding.spinnerJuevesInicio, binding.spinnerViernesInicio, binding.spinnerSabadoInicio, binding.spinnerDomingoInicio,
 
-        // Buscar posición
-        int spinnerPosition = adapter.getPosition(valorGuardado);
-        if (spinnerPosition >= 0) {
-            spinner.setSelection(spinnerPosition);
+                binding.spinnerLunesDescanso, binding.spinnerMartesDescanso, binding.spinnerMiercolesDescanso,
+                binding.spinnerJuevesDescanso, binding.spinnerViernesDescanso, binding.spinnerSabadoDescanso, binding.spinnerDomingoDescanso,
+
+                binding.spinnerLunesFin, binding.spinnerMartesFin, binding.spinnerMiercolesFin,
+                binding.spinnerJuevesFin, binding.spinnerViernesFin, binding.spinnerSabadoFin, binding.spinnerDomingoFin
+        };
+
+        // Asignamos el adaptador a todos rápidamente
+        for (Spinner spinner : todosLosSpinners) {
+            spinner.setAdapter(adapter);
         }
     }
 
-    // Método para guardar todo cuando el usuario sale de la pantalla
+    private void cargarHorariosGuardados() {
+        // Lunes
+        seleccionarValorGuardado(binding.spinnerLunesInicio, "Lunes_Inicio");
+        seleccionarValorGuardado(binding.spinnerLunesDescanso, "Lunes_Descanso");
+        seleccionarValorGuardado(binding.spinnerLunesFin, "Lunes_Fin");
+        // Martes
+        seleccionarValorGuardado(binding.spinnerMartesInicio, "Martes_Inicio");
+        seleccionarValorGuardado(binding.spinnerMartesDescanso, "Martes_Descanso");
+        seleccionarValorGuardado(binding.spinnerMartesFin, "Martes_Fin");
+        // Miércoles
+        seleccionarValorGuardado(binding.spinnerMiercolesInicio, "Miercoles_Inicio");
+        seleccionarValorGuardado(binding.spinnerMiercolesDescanso, "Miercoles_Descanso");
+        seleccionarValorGuardado(binding.spinnerMiercolesFin, "Miercoles_Fin");
+        // Jueves
+        seleccionarValorGuardado(binding.spinnerJuevesInicio, "Jueves_Inicio");
+        seleccionarValorGuardado(binding.spinnerJuevesDescanso, "Jueves_Descanso");
+        seleccionarValorGuardado(binding.spinnerJuevesFin, "Jueves_Fin");
+        // Viernes
+        seleccionarValorGuardado(binding.spinnerViernesInicio, "Viernes_Inicio");
+        seleccionarValorGuardado(binding.spinnerViernesDescanso, "Viernes_Descanso");
+        seleccionarValorGuardado(binding.spinnerViernesFin, "Viernes_Fin");
+        // Sábado
+        seleccionarValorGuardado(binding.spinnerSabadoInicio, "Sabado_Inicio");
+        seleccionarValorGuardado(binding.spinnerSabadoDescanso, "Sabado_Descanso");
+        seleccionarValorGuardado(binding.spinnerSabadoFin, "Sabado_Fin");
+        // Domingo
+        seleccionarValorGuardado(binding.spinnerDomingoInicio, "Domingo_Inicio");
+        seleccionarValorGuardado(binding.spinnerDomingoDescanso, "Domingo_Descanso");
+        seleccionarValorGuardado(binding.spinnerDomingoFin, "Domingo_Fin");
+    }
+
+    private void seleccionarValorGuardado(Spinner spinner, String clavePref) {
+        SharedPreferences horariosPrefs = requireActivity().getSharedPreferences("HorariosPrefs", Context.MODE_PRIVATE);
+        String valorGuardado = horariosPrefs.getString(clavePref, "Seleccionar");
+
+        if (adapter != null) {
+            int spinnerPosition = adapter.getPosition(valorGuardado);
+            if (spinnerPosition >= 0) {
+                spinner.setSelection(spinnerPosition);
+            }
+        }
+    }
+
+    // Guardar TODO cuando el usuario sale de la pantalla
     @Override
     public void onPause() {
         super.onPause();
@@ -94,15 +141,36 @@ public class ServicioFragment extends Fragment implements View.OnClickListener {
     private void guardarHorarios() {
         SharedPreferences.Editor editor = requireActivity().getSharedPreferences("HorariosPrefs", Context.MODE_PRIVATE).edit();
 
-        // Guardar Lunes
+        // Lunes
         editor.putString("Lunes_Inicio", binding.spinnerLunesInicio.getSelectedItem().toString());
         editor.putString("Lunes_Descanso", binding.spinnerLunesDescanso.getSelectedItem().toString());
         editor.putString("Lunes_Fin", binding.spinnerLunesFin.getSelectedItem().toString());
-
-        // ... Repite para los demás días ...
+        // Martes
+        editor.putString("Martes_Inicio", binding.spinnerMartesInicio.getSelectedItem().toString());
+        editor.putString("Martes_Descanso", binding.spinnerMartesDescanso.getSelectedItem().toString());
+        editor.putString("Martes_Fin", binding.spinnerMartesFin.getSelectedItem().toString());
+        // Miércoles
+        editor.putString("Miercoles_Inicio", binding.spinnerMiercolesInicio.getSelectedItem().toString());
+        editor.putString("Miercoles_Descanso", binding.spinnerMiercolesDescanso.getSelectedItem().toString());
+        editor.putString("Miercoles_Fin", binding.spinnerMiercolesFin.getSelectedItem().toString());
+        // Jueves
+        editor.putString("Jueves_Inicio", binding.spinnerJuevesInicio.getSelectedItem().toString());
+        editor.putString("Jueves_Descanso", binding.spinnerJuevesDescanso.getSelectedItem().toString());
+        editor.putString("Jueves_Fin", binding.spinnerJuevesFin.getSelectedItem().toString());
+        // Viernes
+        editor.putString("Viernes_Inicio", binding.spinnerViernesInicio.getSelectedItem().toString());
+        editor.putString("Viernes_Descanso", binding.spinnerViernesDescanso.getSelectedItem().toString());
+        editor.putString("Viernes_Fin", binding.spinnerViernesFin.getSelectedItem().toString());
+        // Sábado
+        editor.putString("Sabado_Inicio", binding.spinnerSabadoInicio.getSelectedItem().toString());
+        editor.putString("Sabado_Descanso", binding.spinnerSabadoDescanso.getSelectedItem().toString());
+        editor.putString("Sabado_Fin", binding.spinnerSabadoFin.getSelectedItem().toString());
+        // Domingo
+        editor.putString("Domingo_Inicio", binding.spinnerDomingoInicio.getSelectedItem().toString());
+        editor.putString("Domingo_Descanso", binding.spinnerDomingoDescanso.getSelectedItem().toString());
+        editor.putString("Domingo_Fin", binding.spinnerDomingoFin.getSelectedItem().toString());
 
         editor.apply();
-        // Toast.makeText(getContext(), "Horarios guardados", Toast.LENGTH_SHORT).show();
     }
 
     // --- LÓGICA BOTONES MANUALES ---
@@ -142,17 +210,14 @@ public class ServicioFragment extends Fragment implements View.OnClickListener {
     }
 
     private void cambiarColorBotones(View activo) {
-        // Resetear todos a blanco
         binding.buttonAvailable.setBackgroundTintList(requireContext().getColorStateList(android.R.color.white));
         binding.buttonOnBreak.setBackgroundTintList(requireContext().getColorStateList(android.R.color.white));
         binding.buttonOutOfService.setBackgroundTintList(requireContext().getColorStateList(android.R.color.white));
 
-        // Poner el activo en verde o color distintivo
         activo.setBackgroundTintList(requireContext().getColorStateList(android.R.color.holo_green_light));
     }
 
     private void iniciarWorker() {
-        // Ejecutar cada 15 minutos (mínimo permitido por Android)
         PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(HorarioWorker.class, 15, TimeUnit.MINUTES)
                 .build();
         WorkManager.getInstance(requireContext()).enqueue(request);

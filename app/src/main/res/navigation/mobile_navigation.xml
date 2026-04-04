@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_conexion"
-        android:name="com.example.quickfleet.ui.conexion.ConexionFragment"
+        android:name="com.PolicodeLabs.Delevery_In_Transit.ui.conexion.ConexionFragment"
         android:label="@string/title_conexion" tools:layout="@layout/fragment_conexion" />
     <action
         android:id="@+id/action_conexion_to_pedidos"
@@ -17,12 +17,12 @@
 
     <fragment
         android:id="@+id/nav_pedidos"
-        android:name="com.example.quickfleet.ui.pedidos.PedidosFragment"
+        android:name="com.PolicodeLabs.Delevery_In_Transit.ui.pedidos.PedidosFragment"
         android:label="@string/title_pedidos"   tools:layout="@layout/fragment_pedidos" />
 
     <fragment
         android:id="@+id/nav_servicio"
-        android:name="com.example.quickfleet.ui.servicio.ServicioFragment"
+        android:name="com.PolicodeLabs.Delevery_In_Transit.ui.servicio.ServicioFragment"
         android:label="@string/title_servicio"  tools:layout="@layout/fragment_servicio" />
 
 </navigation>

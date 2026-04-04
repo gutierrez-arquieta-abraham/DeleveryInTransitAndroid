@@ -67,28 +67,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     SharedPreferences.Editor editor = getSharedPreferences("MisPreferencias", MODE_PRIVATE).edit();
 
-                    // --- GUARDAR DATOS ---
+                    // --- GUARDAR DATOS PRINCIPALES ---
                     editor.putInt("ID_USUARIO", usuario.getId());
                     editor.putString("NOMBRE_USUARIO", usuario.getNombre());
                     editor.putString("EMAIL_USUARIO", usuario.getEmail());
+                    editor.putInt("ROL_USUARIO", usuario.getRolId()); // Buena práctica guardarlo
 
-                    // --- CORRECCIÓN AQUÍ ---
-                    // Como 'getNegocio()' no existe, usamos el ID del usuario como referencia.
-                    // Si eres GESTOR (Rol 1), tu ID de usuario servirá para buscar tus pedidos.
-                    if (usuario.getRolId() == 1) {
+                    // --- BLINDAJE DEL ID LICENCIA ---
+                    // Si el usuario ya tiene un negocio asignado, lo guardamos.
+                    // Si es nuevo (null o 0), le ponemos -1 para saber que no tiene negocio.
+                    if (usuario.getIdLicencia() != null && usuario.getIdLicencia() > 0) {
                         editor.putInt("ID_LICENCIA", usuario.getIdLicencia());
+                    } else {
+                        editor.putInt("ID_LICENCIA", -1);
                     }
-                    // -----------------------
 
                     editor.apply(); // Confirmar guardado
 
                     // Navegación
                     if (usuario.getRolId() == 1) {
+                        // Pasamos el nombre al activity para que te salude
                         Intent intent = new Intent(LoginActivity.this, Main_Negocio.class);
+                        intent.putExtra("NOMBRE_USUARIO", usuario.getNombre());
                         startActivity(intent);
                         finish();
                     } else if (usuario.getRolId() == 2) {
                         Intent intent = new Intent(LoginActivity.this, Main_Repartidor.class);
+                        intent.putExtra("NOMBRE_USUARIO", usuario.getNombre());
                         startActivity(intent);
                         finish();
                     } else {

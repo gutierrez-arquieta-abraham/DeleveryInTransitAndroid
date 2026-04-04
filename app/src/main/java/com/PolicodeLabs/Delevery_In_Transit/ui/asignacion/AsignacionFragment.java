@@ -1,6 +1,8 @@
 package com.PolicodeLabs.Delevery_In_Transit.ui.asignacion;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,23 +32,35 @@ public class AsignacionFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private PedidosAdapter adapter;
-    private int idLicencia = 1; // ID por defecto (o obténlo del Intent si prefieres)
+    private int idLicencia = -1; // <-- Ahora inicia vacío, sin quemar datos
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        // Usamos el layout que tiene el RecyclerView (no el de los Spinners)
-        View root = inflater.inflate(R.layout.fragment_asignacion, container, false);
 
-        // Vinculamos el RecyclerView (Asegúrate que en tu XML el ID sea recyclerPedidosAsignacion)
+        View root = inflater.inflate(R.layout.fragment_asignacion, container, false);
         recyclerView = root.findViewById(R.id.recyclerPedidosAsignacion);
 
-        // Si recyclerView es null, es porque tu XML todavía tiene Spinners. ¡Cámbialo!
         if (recyclerView != null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-            cargarPedidosPendientes();
         }
 
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // --- EXTRACCIÓN DINÁMICA DE LA LICENCIA ---
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+        idLicencia = prefs.getInt("ID_LICENCIA", -1);
+
+        // Validamos que sí tenga un negocio antes de pedir datos al servidor
+        if (idLicencia != -1 && recyclerView != null) {
+            cargarPedidosPendientes();
+        } else {
+            Toast.makeText(getContext(), "Error: No tienes un negocio asignado", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void cargarPedidosPendientes() {
@@ -57,7 +72,8 @@ public class AsignacionFragment extends Fragment {
                     List<PedidoDto> pendientes = new ArrayList<>();
 
                     for (PedidoDto p : todos) {
-                        if ("PENDIENTE".equalsIgnoreCase(p.getEstadoReal()) || "PENDIENTE".equalsIgnoreCase(p.getEstadoReal())) {
+                        // Limpié la redundancia que tenías aquí
+                        if ("PENDIENTE".equalsIgnoreCase(p.getEstadoReal())) {
                             pendientes.add(p);
                         }
                     }
@@ -84,6 +100,12 @@ public class AsignacionFragment extends Fragment {
             public void onResponse(Call<List<UsuarioResponse>> call, Response<List<UsuarioResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<UsuarioResponse> repartidores = response.body();
+
+                    if (repartidores.isEmpty()) {
+                        Toast.makeText(getContext(), "No hay repartidores registrados en este negocio", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     String[] nombres = new String[repartidores.size()];
                     for (int i = 0; i < repartidores.size(); i++) {
                         nombres[i] = repartidores.get(i).getNombre();
@@ -92,8 +114,8 @@ public class AsignacionFragment extends Fragment {
                     new AlertDialog.Builder(getContext())
                             .setTitle("Asignar Pedido #" + pedido.getNumOrd())
                             .setItems(nombres, (dialog, which) -> {
-                                int idRepartidor = repartidores.get(which).getId();
-                                ejecutarAsignacion(pedido.getNumOrd(), idRepartidor);
+                                int idRepartidorElegido = repartidores.get(which).getId();
+                                ejecutarAsignacion(pedido.getNumOrd(), idRepartidorElegido);
                             })
                             .show();
                 }
@@ -107,11 +129,15 @@ public class AsignacionFragment extends Fragment {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "¡Asignado!", Toast.LENGTH_SHORT).show();
-                    cargarPedidosPendientes(); // Recargar lista
+                    Toast.makeText(getContext(), "¡Pedido asignado con éxito!", Toast.LENGTH_SHORT).show();
+                    cargarPedidosPendientes(); // Recargar la lista automáticamente
+                } else {
+                    Toast.makeText(getContext(), "Error al asignar pedido", Toast.LENGTH_SHORT).show();
                 }
             }
-            @Override public void onFailure(Call<Void> call, Throwable t) {}
+            @Override public void onFailure(Call<Void> call, Throwable t) {
+                Toast.makeText(getContext(), "Fallo de conexión", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }

@@ -1,5 +1,7 @@
 package com.PolicodeLabs.Delevery_In_Transit.ui.negocioconexion;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,9 +26,7 @@ import retrofit2.Response;
 public class ConexionLicenciaFragment extends Fragment {
 
     private FragmentConexionLicenciaBinding binding;
-
-    // TODO: Obtener dinámicamente del Login. Por ahora usamos el del Jefe Diego.
-    private String emailUsuario = "jefe@taqueria.com";
+    private String emailUsuarioReal; // <-- La variable ahora empieza vacía
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -39,7 +39,16 @@ public class ConexionLicenciaFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. INTENTO DE ACCESO RÁPIDO (AUTOMÁTICO)
+        // --- LA MAGIA ESTÁ AQUÍ: LEEMOS EL CORREO REAL ---
+        SharedPreferences prefs = requireActivity().getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+        emailUsuarioReal = prefs.getString("EMAIL_USUARIO", "");
+
+        if (emailUsuarioReal.isEmpty()) {
+            Toast.makeText(getContext(), "Error: No se encontró el correo del usuario", Toast.LENGTH_SHORT).show();
+            return; // Si no hay correo, detenemos todo por seguridad
+        }
+
+        // 1. INTENTO DE ACCESO RÁPIDO (AUTOMÁTICO) con el correo real
         verificarEstadoDelUsuario();
 
         // 2. ACCESO MANUAL (BOTÓN)
@@ -55,14 +64,13 @@ public class ConexionLicenciaFragment extends Fragment {
 
     // --- LÓGICA AUTOMÁTICA (BÚSQUEDA SILENCIOSA) ---
     private void verificarEstadoDelUsuario() {
-        // Deshabilitamos botón mientras verifica para evitar conflictos
         binding.btnRegistrarLicencia.setEnabled(false);
         binding.btnRegistrarLicencia.setText("Cargando...");
 
-        RetrofitClient.getApiService().obtenerMiNegocio(emailUsuario).enqueue(new Callback<NegocioDto>() {
+        // Mandamos el email real a Spring Boot
+        RetrofitClient.getApiService().obtenerMiNegocio(emailUsuarioReal).enqueue(new Callback<NegocioDto>() {
             @Override
             public void onResponse(Call<NegocioDto> call, Response<NegocioDto> response) {
-                // Restauramos UI por si el usuario se queda aquí
                 if (binding != null) {
                     binding.btnRegistrarLicencia.setEnabled(true);
                     binding.btnRegistrarLicencia.setText("Registrar");
@@ -72,23 +80,20 @@ public class ConexionLicenciaFragment extends Fragment {
                     NegocioDto negocio = response.body();
                     NavController navController = Navigation.findNavController(binding.getRoot());
 
-                    // CASO A: Registro COMPLETO (Ya tiene código -NG) -> Ir directo a Clave
+                    // CASO A: Registro COMPLETO
                     if (negocio.getCodigoConexion() != null && !negocio.getCodigoConexion().isEmpty()) {
                         Toast.makeText(getContext(), "Sesión recuperada: " + negocio.getNomEmp(), Toast.LENGTH_SHORT).show();
-
                         Bundle bundle = new Bundle();
                         bundle.putString("CODIGO_CONEXION", negocio.getCodigoConexion());
-
                         navController.navigate(R.id.action_licencia_to_clave, bundle);
                     }
-                    // CASO B: Registro INCOMPLETO (Tiene ID pero faltan datos) -> Ir a Datos
+                    // CASO B: Registro INCOMPLETO
                     else {
                         Bundle bundle = new Bundle();
                         bundle.putInt("ID_NEGOCIO", negocio.getIdLicencia());
                         navController.navigate(R.id.action_licencia_to_datos, bundle);
                     }
                 }
-                // CASO C: (404) Usuario nuevo -> Se queda aquí para ingresar licencia manualmente
             }
 
             @Override
@@ -106,7 +111,6 @@ public class ConexionLicenciaFragment extends Fragment {
         binding.btnRegistrarLicencia.setEnabled(false);
         binding.btnRegistrarLicencia.setText("Verificando...");
 
-        // Usamos el endpoint que devuelve Integer (ID)
         RetrofitClient.getApiService().validarCodigoLicencia(codigoString).enqueue(new Callback<Integer>() {
             @Override
             public void onResponse(Call<Integer> call, Response<Integer> response) {
@@ -117,15 +121,10 @@ public class ConexionLicenciaFragment extends Fragment {
 
                 if (response.isSuccessful() && response.body() != null) {
                     int idNegocio = response.body();
-
                     Toast.makeText(getContext(), "Licencia Válida", Toast.LENGTH_SHORT).show();
-
                     Bundle bundle = new Bundle();
                     bundle.putInt("ID_NEGOCIO", idNegocio);
-
-                    Navigation.findNavController(binding.getRoot())
-                            .navigate(R.id.action_licencia_to_datos, bundle);
-
+                    Navigation.findNavController(binding.getRoot()).navigate(R.id.action_licencia_to_datos, bundle);
                 } else {
                     binding.etCodigoLicencia.setError("Licencia no válida o no encontrada");
                     Toast.makeText(getContext(), "Verifica tu código DIT", Toast.LENGTH_SHORT).show();

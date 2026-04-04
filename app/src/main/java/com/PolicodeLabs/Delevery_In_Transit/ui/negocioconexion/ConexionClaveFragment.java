@@ -45,7 +45,7 @@ public class ConexionClaveFragment extends Fragment {
 
     private void copiarAlPortapapeles(String texto) {
         ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("Código QuickFleet", texto);
+        ClipData clip = ClipData.newPlainText("Código Delivery In Transit", texto);
         clipboard.setPrimaryClip(clip);
         Toast.makeText(getContext(), "Copiado: " + texto, Toast.LENGTH_SHORT).show();
     }
@@ -53,7 +53,7 @@ public class ConexionClaveFragment extends Fragment {
     private void compartirCodigo(String texto) {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, "Unete a mi equipo en QuickFleet con este código: " + texto);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Unete a mi equipo en Delivery In Transit con este código: " + texto);
         sendIntent.setType("text/plain");
 
         Intent shareIntent = Intent.createChooser(sendIntent, "Compartir código vía...");

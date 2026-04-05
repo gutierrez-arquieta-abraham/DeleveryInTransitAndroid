@@ -16,8 +16,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.PolicodeLabs.Delevery_In_Transit.R;
 import com.PolicodeLabs.Delevery_In_Transit.api.RetrofitClient;
 import com.PolicodeLabs.Delevery_In_Transit.databinding.FragmentUbicacionBinding;
+import com.PolicodeLabs.Delevery_In_Transit.model.NegocioDto;
 import com.PolicodeLabs.Delevery_In_Transit.model.PedidoDto;
 import com.PolicodeLabs.Delevery_In_Transit.model.UsuarioDto;
 
@@ -26,6 +28,7 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,48 +39,96 @@ import retrofit2.Response;
 
 public class UbicacionFragment extends Fragment {
 
-    // Binding para acceder al XML
     private FragmentUbicacionBinding binding;
 
     // Variables del Mapa
     private MapView map;
-    private Map<Integer, Marker> marcadoresActivos = new HashMap<>(); // Para rastrear marcadores por ID de Pedido
+    private Map<Integer, Marker> marcadoresActivos = new HashMap<>(); // Marcadores de pedidos
+    private Marker marcadorNegocio = null; // <-- NUEVO: Marcador intocable para el local
 
-    // Variables para actualización automática (Loop)
+    // Variables para actualización automática
     private Handler handler = new Handler(Looper.getMainLooper());
     private Runnable runnable;
-    private int ID_LICENCIA = -1; // ID del Negocio (Gestor)
+    private int ID_LICENCIA = -1;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // 1. Configuración de OSMDroid (Importante para que cargue el mapa)
         Context ctx = requireActivity().getApplicationContext();
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-
-        // 2. Inflar el layout con Binding
+        Configuration.getInstance().setUserAgentValue(ctx.getPackageName());
         binding = FragmentUbicacionBinding.inflate(inflater, container, false);
 
-        // 3. Obtener ID del Negocio (Guardado en Login)
         SharedPreferences prefs = requireActivity().getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
         ID_LICENCIA = prefs.getInt("ID_LICENCIA", -1);
+        Log.d("DEBUG_APP", "El ID_LICENCIA recuperado es: " + ID_LICENCIA); // <-- REVISA ESTO EN LOGCAT
 
-        // 4. Configurar el Mapa Inicial
         configurarMapa();
+
+        // <-- NUEVO: Traer la ubicación del negocio UNA sola vez al inicio
+        cargarUbicacionDelNegocio();
 
         return binding.getRoot();
     }
 
     private void configurarMapa() {
-        map = binding.mapaOSM; // ID del XML
+        map = binding.mapaOSM;
         map.setMultiTouchControls(true);
 
-        // Punto inicial (CDMX por defecto)
+        // Centro temporal por si el negocio tarda en cargar o no tiene coordenadas
         GeoPoint startPoint = new GeoPoint(19.4326, -99.1332);
         map.getController().setZoom(13.0);
         map.getController().setCenter(startPoint);
     }
 
-    // --- CICLO DE VIDA (Iniciar/Detener actualizaciones) ---
+    // --- LÓGICA PARA EL PIN DEL NEGOCIO ---
+    private void cargarUbicacionDelNegocio() {
+        if (ID_LICENCIA == -1) return;
+
+        Log.d("DEBUG_API", "➡️ Pidiendo datos del negocio ID: " + ID_LICENCIA);
+
+        RetrofitClient.getApiService().getNegocioById(ID_LICENCIA).enqueue(new Callback<NegocioDto>() {
+            @Override
+            public void onResponse(Call<NegocioDto> call, Response<NegocioDto> response) {
+                Log.d("DEBUG_API", "⬅️ getNegocioById respondió. ¿Éxito?: " + response.isSuccessful() + " | Código: " + response.code());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    NegocioDto negocio = response.body();
+                    Log.d("DEBUG_API", "📍 Coordenadas recibidas: Lat=" + negocio.getLatitud() + ", Lon=" + negocio.getLongitud());
+
+                    if (negocio.getLatitud() != null && negocio.getLongitud() != null
+                            && negocio.getLatitud() != 0 && negocio.getLongitud() != 0) {
+
+                        GeoPoint puntoNegocio = new GeoPoint(negocio.getLatitud(), negocio.getLongitud());
+                        map.getController().setCenter(puntoNegocio);
+                        map.getController().setZoom(16.0);
+
+                        if (marcadorNegocio == null) {
+                            marcadorNegocio = new Marker(map);
+                            marcadorNegocio.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                            Drawable icon = ContextCompat.getDrawable(requireContext(), android.R.drawable.ic_menu_mylocation).mutate();
+                            icon.setTint(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark));
+                            marcadorNegocio.setIcon(icon);
+                            map.getOverlays().add(marcadorNegocio);
+                        }
+
+                        marcadorNegocio.setPosition(puntoNegocio);
+                        marcadorNegocio.setTitle(negocio.getNomEmp());
+                        map.invalidate();
+                        Log.d("DEBUG_API", "✅ Pin del negocio dibujado en el mapa.");
+                    } else {
+                        Log.e("DEBUG_API", "❌ El negocio no tiene coordenadas válidas en la BD.");
+                    }
+                } else {
+                    Log.e("DEBUG_API", "❌ Error del servidor en getNegocioById. Body nulo o error HTTP.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NegocioDto> call, Throwable t) {
+                Log.e("DEBUG_API", "🚨 Falla de red en getNegocioById: " + t.getMessage());
+            }
+        });
+    }
 
     @Override
     public void onResume() {
@@ -96,17 +147,15 @@ public class UbicacionFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Evitar fugas de memoria
+        binding = null;
     }
-
-    // --- LÓGICA DE ACTUALIZACIÓN ---
 
     private void iniciarActualizacionAutomatica() {
         runnable = new Runnable() {
             @Override
             public void run() {
                 obtenerDatosDelServidor();
-                handler.postDelayed(this, 5000); // Repetir cada 5 segundos
+                handler.postDelayed(this, 5000);
             }
         };
         handler.post(runnable);
@@ -117,72 +166,63 @@ public class UbicacionFragment extends Fragment {
             handler.removeCallbacks(runnable);
         }
     }
-
+    // --- LÓGICA PARA LOS CONTADORES (##) ---
     private void obtenerDatosDelServidor() {
         if (ID_LICENCIA == -1) return;
 
-        // LLAMADA 1: Obtener Pedidos (Para pintar marcadores en el mapa)
-        // Asegúrate que este método exista en tu ApiService: getPedidosPorNegocio(id)
-        RetrofitClient.getApiService().getPedidosPorNegocio(ID_LICENCIA).enqueue(new Callback<List<PedidoDto>>() {
-            @Override
-            public void onResponse(Call<List<PedidoDto>> call, Response<List<PedidoDto>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    actualizarMapa(response.body());
-                }
-            }
-            @Override
-            public void onFailure(Call<List<PedidoDto>> call, Throwable t) {
-                Log.e("MAPA", "Error al obtener pedidos: " + t.getMessage());
-            }
-        });
-
-        // LLAMADA 2: Obtener Repartidores (Para los contadores de abajo)
-        // Asegúrate que este método exista: obtenerRepartidoresPorNegocio(id)
+        Log.d("DEBUG_API", "➡️ Pidiendo repartidores para el negocio ID: " + ID_LICENCIA);
         RetrofitClient.getApiService().obtenerRepartidoresPorNegocio(ID_LICENCIA).enqueue(new Callback<List<UsuarioDto>>() {
             @Override
             public void onResponse(Call<List<UsuarioDto>> call, Response<List<UsuarioDto>> response) {
+                Log.d("DEBUG_API", "⬅️ obtenerRepartidores respondió. ¿Éxito?: " + response.isSuccessful());
                 if (response.isSuccessful() && response.body() != null) {
+                    Log.d("DEBUG_API", "👥 Cantidad de repartidores recibidos: " + response.body().size());
                     actualizarContadores(response.body());
+                }else {
+                    try {
+                        String errorServidor = response.errorBody() != null ? response.errorBody().string() : "Error desconocido";
+                        Log.e("DEBUG_API", "❌ Error del servidor al pedir repartidores. Código HTTP: " + response.code() + ". Detalle: " + errorServidor);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             @Override
             public void onFailure(Call<List<UsuarioDto>> call, Throwable t) {
-                Log.e("MAPA", "Error al obtener repartidores: " + t.getMessage());
+                Log.e("DEBUG_API", "🚨 Falla de red en obtenerRepartidores: " + t.getMessage());
             }
         });
-    }
 
-    // --- LÓGICA DEL MAPA (Marcadores) ---
+        // (Aquí mantienes tu otra llamada getPedidosPorNegocio igual que antes)
+    }
 
     private void actualizarMapa(List<PedidoDto> listaPedidos) {
         if (map == null) return;
 
+        List<Integer> pedidosActivosActuales = new ArrayList<>();
+
         for (PedidoDto pedido : listaPedidos) {
-            // Solo nos interesan pedidos activos con coordenadas válidas
+            String estado = pedido.getEstadoReal() != null ? pedido.getEstadoReal().toUpperCase() : "";
+
             if (pedido.getLatitud() != null && pedido.getLongitud() != null
                     && pedido.getLatitud() != 0 && pedido.getLongitud() != 0
-                    && (pedido.getEstadoReal().equals("EN_CAMINO") || pedido.getEstadoReal().equals("EN_CURSO"))) {
+                    && (estado.equals("EN_CAMINO") || estado.equals("EN_CURSO") || estado.equals("ASIGNADO"))) {
 
-                GeoPoint punto = new GeoPoint(pedido.getLatitud(), pedido.getLongitud());
                 Integer idPedido = pedido.getNumOrd();
+                pedidosActivosActuales.add(idPedido);
+                GeoPoint punto = new GeoPoint(pedido.getLatitud(), pedido.getLongitud());
 
                 if (marcadoresActivos.containsKey(idPedido)) {
-                    // Si ya existe, solo movemos el icono
                     Marker m = marcadoresActivos.get(idPedido);
                     m.setPosition(punto);
                     m.setSnippet("Repartidor: " + pedido.getNombreRepartidor());
                 } else {
-                    // Si es nuevo, lo creamos
                     Marker m = new Marker(map);
                     m.setPosition(punto);
                     m.setTitle("Pedido #" + idPedido);
                     m.setSnippet("Repartidor: " + pedido.getNombreRepartidor());
                     m.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
 
-                    // Icono personalizado (opcional, usa uno por defecto si falla)
-                    // m.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_moto));
-
-                    // Colorear según ID repartidor (Tu lógica de colores)
                     if(pedido.getIdRepartidor() != null) {
                         m.setIcon(obtenerIconoColoreado(pedido.getIdRepartidor()));
                     }
@@ -192,57 +232,68 @@ public class UbicacionFragment extends Fragment {
                 }
             }
         }
-        map.invalidate(); // Refrescar visualmente
+
+        List<Integer> marcadoresAEliminar = new ArrayList<>();
+        for (Integer idRegistrado : marcadoresActivos.keySet()) {
+            if (!pedidosActivosActuales.contains(idRegistrado)) {
+                Marker marcadorMuerto = marcadoresActivos.get(idRegistrado);
+                map.getOverlays().remove(marcadorMuerto);
+                marcadoresAEliminar.add(idRegistrado);
+            }
+        }
+
+        for (Integer idParaBorrar : marcadoresAEliminar) {
+            marcadoresActivos.remove(idParaBorrar);
+        }
+
+        map.invalidate();
     }
 
     private Drawable obtenerIconoColoreado(Integer id) {
-        // Usa un icono base que tengas en drawable, o el default de Android
         Drawable icono = ContextCompat.getDrawable(requireContext(), android.R.drawable.ic_menu_mylocation).mutate();
-        int colorHash = -16777216 + (id * 999999); // Genera color pseudo-aleatorio
+        int colorHash = -16777216 + (id * 999999);
         icono.setTint(colorHash);
         return icono;
     }
 
-    // --- LÓGICA DE CONTADORES (Panel inferior) ---
-
+    // --- NUEVA LÓGICA DE CONTADORES STRICTAMENTE FILTRADA ---
     private void actualizarContadores(List<UsuarioDto> listaRepartidores) {
         if (binding == null || listaRepartidores == null) return;
 
-        int enServicio = 0;
+        int enServicioTotal = 0; // Disponible + Ocupado
+        int disponibles = 0;
+        int ocupados = 0; // Asumiremos que este es tu "En Entrega"
         int descanso = 0;
         int fueraServicio = 0;
-        int entregando = 0;
-        int disponibles = 0;
 
         for (UsuarioDto u : listaRepartidores) {
             String estatus = u.getEstatus();
             if (estatus == null) estatus = "FUERA_SERVICIO";
-            estatus = estatus.toUpperCase();
+            estatus = estatus.toUpperCase().trim();
 
-            // GRUPO TRABAJANDO
-            if (estatus.equals("DISPONIBLE") || estatus.equals("OCUPADO")
-                    || estatus.equals("EN_CAMINO") || estatus.equals("EN_CURSO")) {
-
-                enServicio++;
-
-                if (estatus.equals("DISPONIBLE")) {
+            switch (estatus) {
+                case "DISPONIBLE":
                     disponibles++;
-                } else {
-                    entregando++;
-                }
-            } else {
-                // GRUPO NO TRABAJANDO
-                fueraServicio++;
-                if (estatus.equals("EN_DESCANSO")) {
+                    enServicioTotal++;
+                    break;
+                case "OCUPADO":
+                    ocupados++;
+                    enServicioTotal++;
+                    break;
+                case "EN_DESCANSO":
                     descanso++;
-                }
+                    break;
+                case "FUERA_SERVICIO":
+                default:
+                    // Si viene un estado raro o nulo, por seguridad lo contamos como fuera de servicio
+                    fueraServicio++;
+                    break;
             }
         }
 
-        // Asignar a los TextViews usando los IDs de tu XML
-        binding.tvServicioCount.setText(String.valueOf(enServicio));
+        binding.tvServicioCount.setText(String.valueOf(enServicioTotal));
         binding.tvFueraServicioCount.setText(String.valueOf(fueraServicio));
-        binding.tvEnEntregaCount.setText(String.valueOf(entregando));
+        binding.tvEnEntregaCount.setText(String.valueOf(ocupados));
         binding.tvDisponiblesCount.setText(String.valueOf(disponibles));
         binding.tvDescansoCount.setText(String.valueOf(descanso));
     }

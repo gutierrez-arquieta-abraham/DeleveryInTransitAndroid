@@ -32,6 +32,9 @@ public interface ApiService {
 
     @POST("api/usuarios/registrar/repartidor")
     Call<UsuarioResponse> registrarRepartidor(@Body RegistroRequest request);
+    // Obtener los datos de un negocio específico por su ID
+    @GET("api/negocios/{id}")
+    Call<NegocioDto> getNegocioById(@Path("id") int id);
 
     // --- PEDIDOS ---
     @POST("api/pedidos")
@@ -62,8 +65,9 @@ public interface ApiService {
             @Query("longitud") double longitud
     );
 
-    @GET("/api/usuarios/repartidores/{idLicencia}")
-    Call<List<UsuarioDto>> obtenerRepartidoresPorNegocio(@Path("idLicencia") int idLicencia);
+    // Cambia lo que tengas por esto:
+    @GET("api/usuarios/negocio/{idLicencia}/repartidores")
+    Call<List<UsuarioDto>> obtenerRepartidoresPorNegocio(@Path("idLicencia") Integer idLicencia);
 
     // --- HISTORIAL ---
     @GET("/api/pedidos/negocio/{id}/historial")

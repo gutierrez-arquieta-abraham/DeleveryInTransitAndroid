@@ -27,9 +27,7 @@ import retrofit2.Response;
 public class ConexionNegocioFragment extends Fragment {
 
     private FragmentConexionNegocioBinding binding;
-    private int idNegocioRecibido = -1; // Aquí guardaremos el ID que recibimos
-
-    // <-- Adiós al Jefe Diego, ahora inicia vacía
+    private int idNegocioRecibido = -1;
     private String emailUsuarioReal;
 
     @Override
@@ -43,16 +41,13 @@ public class ConexionNegocioFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // --- EXTRACCIÓN DINÁMICA DEL CORREO REAL ---
         SharedPreferences prefs = requireActivity().getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
         emailUsuarioReal = prefs.getString("EMAIL_USUARIO", "");
 
-        // 1. Intentamos recuperar ID por Bundle (si venimos de la pantalla anterior)
         if (getArguments() != null) {
             idNegocioRecibido = getArguments().getInt("ID_NEGOCIO", -1);
         }
 
-        // 2. Carga automática por Email
         if (!emailUsuarioReal.isEmpty()) {
             cargarDatosDeMiNegocio();
         } else {
@@ -66,12 +61,10 @@ public class ConexionNegocioFragment extends Fragment {
         });
     }
 
-    // --- NUEVO MÉTODO DE CARGA AUTOMÁTICA ---
     private void cargarDatosDeMiNegocio() {
         binding.btnGuardarCambios.setEnabled(false);
         binding.btnGuardarCambios.setText("Buscando negocio...");
 
-        // Usamos la variable real
         RetrofitClient.getApiService().obtenerMiNegocio(emailUsuarioReal).enqueue(new Callback<NegocioDto>() {
             @Override
             public void onResponse(Call<NegocioDto> call, Response<NegocioDto> response) {
@@ -81,15 +74,12 @@ public class ConexionNegocioFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     NegocioDto miNegocio = response.body();
 
-                    // ¡ÉXITO! Ya tenemos el ID real desde la base de datos
                     idNegocioRecibido = miNegocio.getIdLicencia();
 
-                    // Pre-llenamos los campos con lo que ya está en la BD
                     if (miNegocio.getNomEmp() != null) binding.etNombreNegocio.setText(miNegocio.getNomEmp());
                     if (miNegocio.getRfcEnc() != null) binding.etRFC.setText(miNegocio.getRfcEnc());
                     if (miNegocio.getDireccion() != null) binding.etDireccionNegocio.setText(miNegocio.getDireccion());
                     if (miNegocio.getZonaCobertura() != null) binding.etZonaCobertura.setText(String.valueOf(miNegocio.getZonaCobertura()));
-
                 }
             }
 
@@ -101,7 +91,6 @@ public class ConexionNegocioFragment extends Fragment {
         });
     }
 
-    // --- VALIDACIONES ---
     private boolean validarCampos() {
         boolean esValido = true;
 
@@ -141,7 +130,6 @@ public class ConexionNegocioFragment extends Fragment {
         return esValido;
     }
 
-    // --- ENVÍO DE DATOS ---
     private void enviarDatosAlServidor() {
         if (idNegocioRecibido == -1) {
             Toast.makeText(getContext(), "Error: No se identificó el negocio", Toast.LENGTH_SHORT).show();
@@ -154,7 +142,6 @@ public class ConexionNegocioFragment extends Fragment {
 
         String zonaTexto = binding.etZonaCobertura.getText().toString().trim();
         datosNegocio.setZonaCobertura(Integer.parseInt(zonaTexto));
-
         datosNegocio.setRfcEnc(binding.etRFC.getText().toString().trim());
 
         binding.btnGuardarCambios.setEnabled(false);
@@ -168,6 +155,12 @@ public class ConexionNegocioFragment extends Fragment {
 
                 if (response.isSuccessful() && response.body() != null) {
                     NegocioDto respuesta = response.body();
+
+                    // 👇 EL FIX: Grabamos el ID en memoria para liberar el resto de la app 👇
+                    requireActivity().getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE)
+                            .edit()
+                            .putInt("ID_LICENCIA", idNegocioRecibido)
+                            .apply();
 
                     Toast.makeText(getContext(), "¡Datos guardados!", Toast.LENGTH_SHORT).show();
 

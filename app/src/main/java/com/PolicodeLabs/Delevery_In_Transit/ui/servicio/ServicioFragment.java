@@ -201,6 +201,9 @@ public class ServicioFragment extends Fragment implements View.OnClickListener {
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "Estado actualizado: " + estado, Toast.LENGTH_SHORT).show();
                 }
+                else {
+                    Toast.makeText(getContext(), "Error en el servidor", Toast.LENGTH_SHORT).show();
+                }
             }
             @Override
             public void onFailure(Call<UsuarioDto> call, Throwable t) {

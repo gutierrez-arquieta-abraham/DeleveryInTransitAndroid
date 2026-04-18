@@ -45,7 +45,7 @@ public class Main_Repartidor extends AppCompatActivity {
         NavigationView navigationView = binding.navView;
 
         appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_conexion, R.id.nav_pedidos, R.id.nav_servicio)
+                R.id.nav_conexion, R.id.nav_pedidos, R.id.nav_servicio, R.id.nav_estadisticas, R.id.nav_Salir)
                 .setOpenableLayout(drawerLayout)
                 .build();
 

@@ -18,6 +18,14 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven(url = "https://jitpack.io") // <-- ESTA LÍNEA ES CRÍTICA
+    }
+}
 
 rootProject.name = "Delevery In-Transit"
 include(":app")

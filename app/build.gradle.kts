@@ -12,14 +12,15 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 1
-        versionName = "2.5"
+        versionName = "1.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -36,7 +37,7 @@ android {
 }
 
 dependencies {
-
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)

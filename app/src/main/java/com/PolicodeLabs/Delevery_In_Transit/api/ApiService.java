@@ -1,6 +1,6 @@
 package com.PolicodeLabs.Delevery_In_Transit.api;
 
-import com.PolicodeLabs.Delevery_In_Transit.model.EstadisticasPedidoDto;
+import com.PolicodeLabs.Delevery_In_Transit.model.DashboardNegocioDto;
 import com.PolicodeLabs.Delevery_In_Transit.model.LoginRequest;
 import com.PolicodeLabs.Delevery_In_Transit.model.NegocioDto;
 import com.PolicodeLabs.Delevery_In_Transit.model.PedidoDto;
@@ -23,8 +23,9 @@ import retrofit2.http.Query;
 
 public interface ApiService {
 
-    @GET("api/pedidos/{numOrd}/estadisticas")
-    Call<EstadisticasPedidoDto> obtenerEstadisticas(@Path("numOrd") int numOrd);
+    // --- ESTADÍSTICAS Y DASHBOARD ---
+    @GET("api/estadisticas/negocio/{idLicencia}")
+    Call<DashboardNegocioDto> obtenerDashboardNegocio(@Path("idLicencia") Integer idLicencia);
 
     // --- AUTENTICACIÓN ---
     @POST("api/usuarios/login")

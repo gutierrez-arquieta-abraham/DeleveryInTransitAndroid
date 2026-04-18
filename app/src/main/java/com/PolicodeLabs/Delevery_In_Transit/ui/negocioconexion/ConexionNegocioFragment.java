@@ -8,6 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import android.location.Address;
+import android.location.Geocoder;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -136,52 +141,91 @@ public class ConexionNegocioFragment extends Fragment {
             return;
         }
 
+        binding.btnGuardarCambios.setEnabled(false);
+        binding.btnGuardarCambios.setText("Buscando coordenadas...");
+
         NegocioDto datosNegocio = new NegocioDto();
         datosNegocio.setNomEmp(binding.etNombreNegocio.getText().toString().trim());
-        datosNegocio.setDireccion(binding.etDireccionNegocio.getText().toString().trim());
+
+        String direccionEscrita = binding.etDireccionNegocio.getText().toString().trim();
+        datosNegocio.setDireccion(direccionEscrita);
 
         String zonaTexto = binding.etZonaCobertura.getText().toString().trim();
         datosNegocio.setZonaCobertura(Integer.parseInt(zonaTexto));
         datosNegocio.setRfcEnc(binding.etRFC.getText().toString().trim());
 
-        binding.btnGuardarCambios.setEnabled(false);
-        binding.btnGuardarCambios.setText("Guardando...");
+        // --- 1. INICIAMOS EL GEOCODER PARA BUSCAR LA DIRECCIÓN ---
+        String busqueda = direccionEscrita + ", México"; // Damos contexto al GPS
+        Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
 
-        RetrofitClient.getApiService().actualizarNegocio(idNegocioRecibido, datosNegocio).enqueue(new Callback<NegocioDto>() {
-            @Override
-            public void onResponse(Call<NegocioDto> call, Response<NegocioDto> response) {
-                binding.btnGuardarCambios.setEnabled(true);
-                binding.btnGuardarCambios.setText("Guardar cambios");
+        // Lo metemos en un hilo secundario para no congelar la pantalla
+        new Thread(() -> {
+            try {
+                List<Address> resultados = geocoder.getFromLocationName(busqueda, 1);
 
-                if (response.isSuccessful() && response.body() != null) {
-                    NegocioDto respuesta = response.body();
+                requireActivity().runOnUiThread(() -> {
+                    if (resultados != null && !resultados.isEmpty()) {
+                        // ¡Encontramos las coordenadas!
+                        Address ubicacionReal = resultados.get(0);
+                        datosNegocio.setLatitud(ubicacionReal.getLatitude());
+                        datosNegocio.setLongitud(ubicacionReal.getLongitude());
 
-                    // 👇 EL FIX: Grabamos el ID en memoria para liberar el resto de la app 👇
-                    requireActivity().getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE)
-                            .edit()
-                            .putInt("ID_LICENCIA", idNegocioRecibido)
-                            .apply();
+                        binding.btnGuardarCambios.setText("Guardando en servidor...");
 
-                    Toast.makeText(getContext(), "¡Datos guardados!", Toast.LENGTH_SHORT).show();
+                        // --- 2. AHORA SÍ, ENVIAMOS A SPRING BOOT ---
+                        RetrofitClient.getApiService().actualizarNegocio(idNegocioRecibido, datosNegocio).enqueue(new Callback<NegocioDto>() {
+                            @Override
+                            public void onResponse(Call<NegocioDto> call, Response<NegocioDto> response) {
+                                binding.btnGuardarCambios.setEnabled(true);
+                                binding.btnGuardarCambios.setText("Guardar cambios");
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString("CODIGO_CONEXION", respuesta.getCodigoConexion());
+                                if (response.isSuccessful() && response.body() != null) {
+                                    NegocioDto respuesta = response.body();
 
-                    NavController navController = Navigation.findNavController(binding.getRoot());
-                    navController.navigate(R.id.action_datos_to_clave, bundle);
+                                    requireActivity().getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE)
+                                            .edit()
+                                            .putInt("ID_LICENCIA", idNegocioRecibido)
+                                            .apply();
 
-                } else {
-                    Toast.makeText(getContext(), "Error al guardar. Intenta de nuevo.", Toast.LENGTH_SHORT).show();
-                }
+                                    Toast.makeText(getContext(), "¡Datos y ubicación guardados!", Toast.LENGTH_SHORT).show();
+
+                                    Bundle bundle = new Bundle();
+                                    bundle.putString("CODIGO_CONEXION", respuesta.getCodigoConexion());
+
+                                    NavController navController = Navigation.findNavController(binding.getRoot());
+                                    navController.navigate(R.id.action_datos_to_clave, bundle);
+
+                                } else {
+                                    Toast.makeText(getContext(), "Error al guardar en la base de datos.", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<NegocioDto> call, Throwable t) {
+                                binding.btnGuardarCambios.setEnabled(true);
+                                binding.btnGuardarCambios.setText("Guardar cambios");
+                                Toast.makeText(getContext(), "Fallo de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    } else {
+                        // El GPS no reconoció la calle
+                        binding.btnGuardarCambios.setEnabled(true);
+                        binding.btnGuardarCambios.setText("Guardar cambios");
+                        binding.etDireccionNegocio.setError("No pudimos ubicar esta dirección");
+                        Toast.makeText(getContext(), "No pudimos encontrar esa dirección en el mapa. Intenta ser más específico (ej. agregar código postal o colonia).", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                requireActivity().runOnUiThread(() -> {
+                    binding.btnGuardarCambios.setEnabled(true);
+                    binding.btnGuardarCambios.setText("Guardar cambios");
+                    Toast.makeText(getContext(), "Error de red al buscar coordenadas. Verifica tu internet.", Toast.LENGTH_SHORT).show();
+                });
             }
-
-            @Override
-            public void onFailure(Call<NegocioDto> call, Throwable t) {
-                binding.btnGuardarCambios.setEnabled(true);
-                binding.btnGuardarCambios.setText("Guardar cambios");
-                Toast.makeText(getContext(), "Fallo de conexión: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        }).start();
     }
 
     @Override

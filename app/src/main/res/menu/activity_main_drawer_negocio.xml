@@ -25,6 +25,10 @@
             android:icon="@drawable/estadoservicio"
             android:title="Pedidos completados" />
         <item
+            android:id="@+id/nav_estadisticas"
+            android:icon="@drawable/_estadisticas"
+            android:title="Estadisiticas Generales" />
+        <item
             android:id="@+id/nav_Salir"
             android:icon="@drawable/cerrarsecion"
             android:title="Salir" />

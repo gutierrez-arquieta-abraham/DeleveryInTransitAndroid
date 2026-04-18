@@ -22,9 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.PolicodeLabs.Delevery_In_Transit.adapters.PedidoRealizadoAdapter;
 import com.PolicodeLabs.Delevery_In_Transit.api.RetrofitClient;
 import com.PolicodeLabs.Delevery_In_Transit.databinding.FragmentPedidosBinding;
-import com.PolicodeLabs.Delevery_In_Transit.model.Pedido;
 import com.PolicodeLabs.Delevery_In_Transit.model.PedidoDto;
 import com.PolicodeLabs.Delevery_In_Transit.service.LocationService;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder; // <-- IMPORTACIÓN DEL DIALOG
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,14 +75,41 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
             if (pedidoActualEnCurso != null) abrirGoogleMaps(pedidoActualEnCurso.getDestino());
         });
 
-        binding.tvCurrentOrderAddress.setOnClickListener(v -> {
-            if (pedidoActualEnCurso != null) abrirGoogleMaps(pedidoActualEnCurso.getDestino());
-        });
-
-        // Configuración Recycler
+        // Configuración Recycler y la Cartita Flotante (Material Dialog)
         binding.recyclerViewCompletedOrders.setLayoutManager(new LinearLayoutManager(getContext()));
         completedAdapter = new PedidoRealizadoAdapter(listaPedidosRealizados, numOrd -> {
-            Toast.makeText(getContext(), "Pronto: Estadísticas de #" + numOrd, Toast.LENGTH_SHORT).show();
+
+            // 1. Buscamos los datos exactos de ese pedido en la lista que ya descargamos
+            PedidoDto pedidoSeleccionado = null;
+            for (PedidoDto p : listaPedidosRealizados) {
+                if (p.getNumOrd().equals(numOrd)) {
+                    pedidoSeleccionado = p;
+                    break;
+                }
+            }
+
+            if (pedidoSeleccionado != null) {
+                // 2. Preparamos la información de las estadísticas que calculamos en Spring Boot
+                String titulo = "Estadísticas del Pedido #" + numOrd;
+
+                // Formateamos los textos para que si algo viene nulo no explote la app
+                String kms = pedidoSeleccionado.getKilometrosRecorridos() != null ? pedidoSeleccionado.getKilometrosRecorridos() + " km" : "Calculando...";
+                String mins = pedidoSeleccionado.getMinutosTranscurridos() != null ? pedidoSeleccionado.getMinutosTranscurridos() + " min" : "Calculando...";
+
+                String mensaje = "📍 Destino: " + pedidoSeleccionado.getDestino() + "\n\n"
+                        + "👤 Cliente: " + pedidoSeleccionado.getNombreCliente() + "\n\n"
+                        + "🛣️ Distancia recorrida: " + kms + "\n\n"
+                        + "⏱️ Tiempo de entrega: " + mins;
+
+                // 3. Construimos y mostramos la "Cartita Flotante"
+                new MaterialAlertDialogBuilder(requireContext())
+                        .setTitle(titulo)
+                        .setMessage(mensaje)
+                        .setPositiveButton("Aceptar", (dialog, which) -> {
+                            dialog.dismiss(); // Cierra la cartita
+                        })
+                        .show();
+            }
         });
         binding.recyclerViewCompletedOrders.setAdapter(completedAdapter);
 
@@ -130,7 +157,6 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
         boolean hayEnCurso = false;
 
         for (PedidoDto p : pedidos) {
-            // CORRECCIÓN: Usar getEstadoReal() en lugar de getEstatus()
             String est = p.getEstadoReal() != null ? p.getEstadoReal().toUpperCase() : "";
             if (est.equals("EN_CURSO") || est.equals("EN_CAMINO") || est.equals("ASIGNADO")) {
                 llenarPedidoActual(p);
@@ -147,7 +173,7 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<List<PedidoDto>> call, Response<List<PedidoDto>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     listaPedidosRealizados.clear();
-                    listaPedidosRealizados.addAll(response.body()); // ¡Copia todos de golpe!
+                    listaPedidosRealizados.addAll(response.body()); // Copia todos
                     completedAdapter.notifyDataSetChanged();
 
                     binding.recyclerViewCompletedOrders.setVisibility(
@@ -169,7 +195,6 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    // CORRECCIÓN: El parámetro ahora es PedidoDto
     private void llenarPedidoActual(PedidoDto p) {
         this.pedidoActualEnCurso = p;
 
@@ -192,7 +217,7 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
         binding.btnMarcarEntregado.setEnabled(true);
         binding.btnMarcarEntregado.setText("Marcar como Entregado");
 
-        // --- NUEVA LÓGICA: Llamar al cliente del pedido en curso ---
+        // Llamar al cliente del pedido en curso
         binding.btnLlamarClienteActual.setOnClickListener(v -> {
             String telefono = p.getTelefonoCliente();
             if (telefono != null && !telefono.trim().isEmpty()) {
@@ -242,7 +267,6 @@ public class PedidosFragment extends Fragment implements View.OnClickListener {
         } catch (Exception e) {}
     }
 
-    // ✅ CORRECCIÓN FINAL: El onClick SOLO maneja las tarjetas
     @Override
     public void onClick(View v) {
         if (v.getId() == binding.cardCurrentOrder.getId()) {

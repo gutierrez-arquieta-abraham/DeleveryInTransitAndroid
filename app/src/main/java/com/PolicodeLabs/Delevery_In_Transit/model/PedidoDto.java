@@ -1,10 +1,12 @@
 package com.PolicodeLabs.Delevery_In_Transit.model;
 
+import com.google.gson.annotations.SerializedName; // <-- ESTO ES LO QUE FALTABA
+
 public class PedidoDto {
     private Integer numOrd;
     private String descripcion;
     private String destino;
-    private String estadoReal; // EL NUEVO NOMBRE OFICIAL
+    private String estadoReal;
 
     // En Android recibimos las fechas como String desde el JSON
     private String fechaHoraCreacion;
@@ -25,116 +27,69 @@ public class PedidoDto {
     private Double latitudDestino;
     private Double longitudDestino;
 
-    public Integer getNumOrd() {
-        return numOrd;
-    }
+    // --- NUEVAS VARIABLES PARA ANÁLISIS DE DATOS ---
+    @SerializedName("minutosTranscurridos")
+    private Double minutosTranscurridos;
 
-    public void setNumOrd(Integer numOrd) {
-        this.numOrd = numOrd;
-    }
+    @SerializedName("kilometrosRecorridos")
+    private Double kilometrosRecorridos;
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+    // --- GETTERS Y SETTERS ---
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+    public Integer getNumOrd() { return numOrd; }
+    public void setNumOrd(Integer numOrd) { this.numOrd = numOrd; }
 
-    public String getDestino() {
-        return destino;
-    }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public void setDestino(String destino) {
-        this.destino = destino;
-    }
+    public String getDestino() { return destino; }
+    public void setDestino(String destino) { this.destino = destino; }
 
-    public String getEstadoReal() {
-        return estadoReal;
-    }
+    public String getEstadoReal() { return estadoReal; }
+    public void setEstadoReal(String estadoReal) { this.estadoReal = estadoReal; }
 
-    public void setEstadoReal(String estadoReal) {
-        this.estadoReal = estadoReal;
-    }
+    public String getFechaHoraCreacion() { return fechaHoraCreacion; }
+    public void setFechaHoraCreacion(String fechaHoraCreacion) { this.fechaHoraCreacion = fechaHoraCreacion; }
 
-    public String getFechaHoraCreacion() {
-        return fechaHoraCreacion;
-    }
+    public String getFechaHoraRecogida() { return fechaHoraRecogida; }
+    public void setFechaHoraRecogida(String fechaHoraRecogida) { this.fechaHoraRecogida = fechaHoraRecogida; }
 
-    public void setFechaHoraCreacion(String fechaHoraCreacion) {
-        this.fechaHoraCreacion = fechaHoraCreacion;
-    }
+    public String getFechaHoraEntrega() { return fechaHoraEntrega; }
+    public void setFechaHoraEntrega(String fechaHoraEntrega) { this.fechaHoraEntrega = fechaHoraEntrega; }
 
-    public String getFechaHoraRecogida() {
-        return fechaHoraRecogida;
-    }
+    public Double getLatitud() { return latitud; }
+    public void setLatitud(Double latitud) { this.latitud = latitud; }
 
-    public void setFechaHoraRecogida(String fechaHoraRecogida) {
-        this.fechaHoraRecogida = fechaHoraRecogida;
-    }
+    public Double getLongitud() { return longitud; }
+    public void setLongitud(Double longitud) { this.longitud = longitud; }
 
-    public String getFechaHoraEntrega() {
-        return fechaHoraEntrega;
-    }
+    public Integer getIdLicencia() { return idLicencia; }
+    public void setIdLicencia(Integer idLicencia) { this.idLicencia = idLicencia; }
 
-    public void setFechaHoraEntrega(String fechaHoraEntrega) {
-        this.fechaHoraEntrega = fechaHoraEntrega;
-    }
+    public String getNombreNegocio() { return nombreNegocio; }
+    public void setNombreNegocio(String nombreNegocio) { this.nombreNegocio = nombreNegocio; }
 
-    public Double getLatitud() {
-        return latitud;
-    }
+    public Integer getIdRepartidor() { return idRepartidor; }
+    public void setIdRepartidor(Integer idRepartidor) { this.idRepartidor = idRepartidor; }
 
-    public void setLatitud(Double latitud) {
-        this.latitud = latitud;
-    }
-
-    public Double getLongitud() {
-        return longitud;
-    }
-
-    public void setLongitud(Double longitud) {
-        this.longitud = longitud;
-    }
-
-    public Integer getIdLicencia() {
-        return idLicencia;
-    }
-
-    public void setIdLicencia(Integer idLicencia) {
-        this.idLicencia = idLicencia;
-    }
-
-    public String getNombreNegocio() {
-        return nombreNegocio;
-    }
-
-    public void setNombreNegocio(String nombreNegocio) {
-        this.nombreNegocio = nombreNegocio;
-    }
-
-    public Integer getIdRepartidor() {
-        return idRepartidor;
-    }
-
-    public void setIdRepartidor(Integer idRepartidor) {
-        this.idRepartidor = idRepartidor;
-    }
-
-    public String getNombreRepartidor() {
-        return nombreRepartidor;
-    }
-
-    public void setNombreRepartidor(String nombreRepartidor) {
-        this.nombreRepartidor = nombreRepartidor;
-    }
+    public String getNombreRepartidor() { return nombreRepartidor; }
+    public void setNombreRepartidor(String nombreRepartidor) { this.nombreRepartidor = nombreRepartidor; }
 
     public String getNombreCliente() { return nombreCliente; }
     public void setNombreCliente(String nombreCliente) { this.nombreCliente = nombreCliente; }
+
     public String getTelefonoCliente() { return telefonoCliente; }
     public void setTelefonoCliente(String telefonoCliente) { this.telefonoCliente = telefonoCliente; }
+
     public Double getLatitudDestino() { return latitudDestino; }
     public void setLatitudDestino(Double latitudDestino) { this.latitudDestino = latitudDestino; }
+
     public Double getLongitudDestino() { return longitudDestino; }
     public void setLongitudDestino(Double longitudDestino) { this.longitudDestino = longitudDestino; }
+
+    public Double getMinutosTranscurridos() { return minutosTranscurridos; }
+    public void setMinutosTranscurridos(Double minutosTranscurridos) { this.minutosTranscurridos = minutosTranscurridos; }
+
+    public Double getKilometrosRecorridos() { return kilometrosRecorridos; }
+    public void setKilometrosRecorridos(Double kilometrosRecorridos) { this.kilometrosRecorridos = kilometrosRecorridos; }
 }

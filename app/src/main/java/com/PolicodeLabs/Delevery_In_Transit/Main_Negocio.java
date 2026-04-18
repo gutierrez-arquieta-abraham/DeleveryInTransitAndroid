@@ -15,9 +15,23 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import android.location.Address;
+import android.location.Geocoder;
+import android.util.Log;
+import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
+import com.PolicodeLabs.Delevery_In_Transit.api.RetrofitClient;
 import com.PolicodeLabs.Delevery_In_Transit.databinding.ActivityMainNegocioBinding;
+import com.PolicodeLabs.Delevery_In_Transit.model.NegocioDto;
 import com.google.android.material.navigation.NavigationView;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Main_Negocio extends AppCompatActivity {
 
@@ -42,7 +56,7 @@ public class Main_Negocio extends AppCompatActivity {
 
         // --- IDs actualizados para el menú de Negocio ---
         appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_conexion_negocio, R.id.nav_ubicacion, R.id.nav_rutas, R.id.nav_asignacion, R.id.nav_crear_pedido,R.id.nav_conexion_clave)
+                R.id.nav_conexion_negocio, R.id.nav_ubicacion, R.id.nav_rutas, R.id.nav_asignacion, R.id.nav_crear_pedido,R.id.nav_conexion_clave, R.id.nav_estadisticas, R.id.nav_Salir)
                 .setOpenableLayout(drawerLayout)
                 .build();
 
@@ -112,5 +126,54 @@ public class Main_Negocio extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+    public void convertirDireccionACoordenadasYGuardar(NegocioDto negocioCompleto, int idLicencia) {
+
+        // 1. Extraemos la dirección del DTO y le damos contexto
+        String busqueda = negocioCompleto.getDireccion() + ", México";
+
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        new Thread(() -> {
+            try {
+                List<Address> resultados = geocoder.getFromLocationName(busqueda, 1);
+
+                runOnUiThread(() -> {
+                    if (resultados != null && !resultados.isEmpty()) {
+                        Address ubicacionReal = resultados.get(0);
+
+                        // 2. Inyectamos las coordenadas matemáticas al DTO
+                        negocioCompleto.setLatitud(ubicacionReal.getLatitude());
+                        negocioCompleto.setLongitud(ubicacionReal.getLongitude());
+
+                        Log.d("GEOCODER", "📍 Coordenadas listas. Guardando en Spring Boot...");
+
+                        // 3. LLAMADA A RETROFIT USANDO TU ApiService
+                        RetrofitClient.getApiService().actualizarNegocio(idLicencia, negocioCompleto).enqueue(new Callback<NegocioDto>() {
+                            @Override
+                            public void onResponse(Call<NegocioDto> call, Response<NegocioDto> response) {
+                                if (response.isSuccessful()) {
+                                    Toast.makeText(Main_Negocio.this, "✅ Datos y ubicación guardados correctamente", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(Main_Negocio.this, "❌ Error del servidor al guardar", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<NegocioDto> call, Throwable t) {
+                                Toast.makeText(Main_Negocio.this, "🚨 Falla de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    } else {
+                        Toast.makeText(Main_Negocio.this, "❌ No pudimos ubicar esa dirección en el mapa. Sé más específico.", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(Main_Negocio.this, "🚨 Error de red al buscar la dirección.", Toast.LENGTH_SHORT).show());
+            }
+        }).start();
     }
 }

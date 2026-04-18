@@ -60,5 +60,10 @@
         android:name="com.PolicodeLabs.Delevery_In_Transit.ui.crear_pedido.CrearPedidoFragment"
         android:label="Creación de pedidos"
         tools:layout="@layout/fragment_crear_pedido"/>
+    <fragment
+        android:id="@+id/nav_estadisticas"
+        android:name="com.PolicodeLabs.Delevery_In_Transit.ui.dashboard.DashboardFragment"
+        android:label="Estadisitcas Generales Del Negocio"
+        tools:layout="@layout/fragment_dashboard" />
 
 </navigation>

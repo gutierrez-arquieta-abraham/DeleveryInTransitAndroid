@@ -21,6 +21,11 @@ public class Pedido implements Serializable {
     private String nombreCliente;
     private String fechaEntrega;
     private String horaEntrega;
+    @SerializedName("minutosTranscurridos")
+    private Double minutosTranscurridos;
+
+    @SerializedName("kilometrosRecorridos")
+    private Double kilometrosRecorridos;
 
     public Pedido() {}
 
@@ -53,4 +58,10 @@ public class Pedido implements Serializable {
 
     public String getHoraEntrega() { return horaEntrega; }
     public void setHoraEntrega(String horaEntrega) { this.horaEntrega = horaEntrega; }
+
+    public Double getMinutosTranscurridos() { return minutosTranscurridos; }
+    public void setMinutosTranscurridos(Double minutosTranscurridos) { this.minutosTranscurridos = minutosTranscurridos; }
+
+    public Double getKilometrosRecorridos() { return kilometrosRecorridos; }
+    public void setKilometrosRecorridos(Double kilometrosRecorridos) { this.kilometrosRecorridos = kilometrosRecorridos; }
 }

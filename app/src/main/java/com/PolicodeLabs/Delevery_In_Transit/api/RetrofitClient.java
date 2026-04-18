@@ -11,7 +11,7 @@ public class RetrofitClient {
     // ¡OJO! Si usas el EMULADOR de Android, tu PC no es "localhost", es "10.0.2.2".
     // ¡OJO! Si usas el Android, es "http://192.168.137.1:8080/".
     //private static final String BASE_URL = "http://192.168.137.1:8080/";
-    private static final String BASE_URL = "https://tu-proyecto-production.up.railway.app/";
+    private static final String BASE_URL = "https://springboot-production.up.railway.app/";
 
     private static Retrofit retrofit = null;
 
